@@ -24,12 +24,16 @@ public class CoffeeMachine {
     }
 
     public void putWater(List<Container> containers){
-        if ( containers.isEmpty() || containers.stream().anyMatch(container -> !container.isFull) ){
+        if (hasWaterIn(containers)){
             throw new RuntimeException(
                     "***** Recipiente(s) está(ão) vazio(s), não é possível colocar água... ***** \n"
             );
         } else
             setHasWater(true);
+    }
+
+    private boolean hasWaterIn(List<Container> containers) {
+        return containers.isEmpty() || containers.stream().anyMatch(container -> !container.isFull);
     }
 
     public void putCoffee(GroundCoffee coffee){
@@ -41,13 +45,12 @@ public class CoffeeMachine {
         if(hasWater && hasGroudCoffee){
             System.out.println("***** Preparando o seu cafézinho... ***** \n");
             Thread.sleep(2000);
-            coffeeReady();
         } else
             System.out.println("***** A máquina foi ligada sem Café e Água ***** \n");
     }
     private void coffeeReady(){
+        System.out.println("***** Café Pronto. ***** \n");
         setOn(false);
-        System.out.println("***** Seu cafézinho está pronto! :] ***** \n");
     }
 
     public boolean isOn() {

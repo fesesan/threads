@@ -30,6 +30,7 @@ public class CoffeeFactory {
 
         t2.join();
         t3.join();
+        t4.join();
 
         makeCoffee();
 
@@ -62,12 +63,17 @@ public class CoffeeFactory {
         this.cups = cups;
     }
 
-    private void putWaterOnCup(List<Container> cups){
+    private void putWaterOnCup(List<Container> cups) {
         out.println(Thread.currentThread().getName() + "\n");
         Faucet faucet = new Faucet();
         faucet.open();
-        faucet.putWaterIn(cups);
-        faucet.close();
+        try {
+            faucet.putWaterIn(cups);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } finally {
+            faucet.close();
+        }
     }
 
     private void makeCoffee() throws InterruptedException {
@@ -76,6 +82,12 @@ public class CoffeeFactory {
         coffeeMachine.putWater(cups);
         coffeeMachine.putCoffee(groundCoffee);
         coffeeMachine.on();
+        putSugar();
+        out.println("***** Seu Café está prontinho! :] ***** \n");
+    }
+
+    private void putSugar(){
+        out.println("***** Adoçando... ***** \n");
     }
 
     public CoffeeMachine getCoffeeMachine() {
