@@ -1,9 +1,18 @@
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Faucet {
 
     public void open(){
         System.out.println("***** Torneira Aberta... ***** \n");
+        if(waterItsOver()){
+            close();
+            throw new RuntimeException("***** Ops... A água acabou! ***** \n");
+        }
+    }
+
+    private boolean waterItsOver() {
+        return (ThreadLocalRandom.current().nextInt() % 2) == 0;
     }
 
     public List<Container> putWaterIn(List<Container> containers) throws InterruptedException {

@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.System.out;
+import static java.lang.System.setOut;
 
 public class CoffeeFactory {
     private List<Container> cups;
@@ -13,42 +14,54 @@ public class CoffeeFactory {
     public CoffeeFactory() {
     }
 
-    public void start() throws InterruptedException {
+    public void start() {
         out.println("****-------------------- Começou a preparar o Café --------------------**** \n");
 
-        Thread t1 = new Thread(() -> setCups(2), "CupsThread");
-        Thread t2 = new Thread(this::setGroudCoffee, "GroundCoffeeThread");
-        Thread t3 = new Thread(this::setSugar, "SugarThread");
-        Thread t4 = new Thread(() -> putWaterOnCup(cups), "putWaterOnCupThread");
+        ThreadGroup coffeeThreads = new ThreadGroup("coffeeThreads");
+        try {
 
-        t1.start();
-        t2.start();
-        t3.start();
+            Thread t1 = new Thread(coffeeThreads, () -> setCups(2), "CupsThread");
+            Thread t2 = new Thread(coffeeThreads, this::setGroudCoffee, "GroundCoffeeThread");
+            Thread t3 = new Thread(coffeeThreads, this::setSugar, "SugarThread");
+            Thread t4 = new Thread(coffeeThreads, () -> putWaterOnCup(cups), "putWaterOnCupThread");
 
-        t1.join();
-        t4.start();
+            t1.start();
+            t2.start();
+            t3.start();
 
-        t2.join();
-        t3.join();
-        t4.join();
+            t1.join();
+            t4.start();
 
-        makeCoffee();
+            t2.join();
+            t3.join();
+            t4.join();
 
-        out.println("****-------------------- Finalizou o preparo do Café --------------------**** \n");
+            makeCoffee();
+
+        } catch (InterruptedException e){
+            out.println("**** Threads Ativas: " + coffeeThreads.activeCount());
+            out.println("**** Tivemos um problema ao preparar o seu café...vamos ter que cancelar! **** \n");
+            coffeeThreads.interrupt();
+            out.println("**** Threads Ativas: " + coffeeThreads.activeCount());
+        } finally {
+            out.println("****-------------------- Finalizou o preparo do Café --------------------**** \n");
+        }
     }
 
     private void setGroudCoffee() {
-        out.println(Thread.currentThread().getName() + "\n");
         groundCoffee = new GroundCoffee();
     }
 
     private void setCups(int quantity) {
-        out.println(Thread.currentThread().getName() + "\n");
-        setCups(getCups(quantity));
+        try {
+            Thread.sleep(30000);
+            setCups(getCups(quantity));
+        } catch (Exception e){
+            throw new RuntimeException(e);
+        }
     }
 
     private void setSugar(){
-        out.println(Thread.currentThread().getName() + "\n");
         sugar = new Sugar();
     }
 
@@ -64,7 +77,6 @@ public class CoffeeFactory {
     }
 
     private void putWaterOnCup(List<Container> cups) {
-        out.println(Thread.currentThread().getName() + "\n");
         Faucet faucet = new Faucet();
         faucet.open();
         try {
@@ -77,12 +89,12 @@ public class CoffeeFactory {
     }
 
     private void makeCoffee() throws InterruptedException {
-        out.println(Thread.currentThread().getName() + "\n");
         setCoffeeMachine(new CoffeeMachine());
         coffeeMachine.putWater(cups);
         coffeeMachine.putCoffee(groundCoffee);
         coffeeMachine.on();
         putSugar();
+        coffeeMachine.off();
         out.println("***** Seu Café está prontinho! :] ***** \n");
     }
 
