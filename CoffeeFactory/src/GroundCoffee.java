@@ -1,6 +1,6 @@
 public class GroundCoffee {
 
     public GroundCoffee(){
-        System.out.println("***** Pegou Pó de Café ***** \n");
+        System.out.println("***** Pegando Pó de Café... ***** \n");
     }
 }

@@ -8,6 +8,7 @@ public class CoffeeFactory {
     private CoffeeMachine coffeeMachine;
     private GroundCoffee groundCoffee;
     private Faucet faucet;
+    private Sugar sugar;
 
     public CoffeeFactory() {
     }
@@ -15,23 +16,33 @@ public class CoffeeFactory {
     public void start() throws InterruptedException {
         out.println("**** Começou a preparar o Café...**** \n");
 
-        Thread t1 = new Thread(() -> { separeteCups(2); }, "CupsThread");
-        Thread t2 = new Thread(() -> { separeteGroudCoffee(); }, "GroundCoffeeThread");
+        Thread t1 = new Thread(() -> setCups(2), "CupsThread");
+        Thread t2 = new Thread(this::setGroudCoffee, "GroundCoffeeThread");
+        Thread t3 = new Thread(this::setSugar, "SugarThread");
 
         t1.start();
         t2.start();
+        t3.start();
 
-       // out.println("***** Pegou " + cups.size() + " Xícara(s) ******");
+        t1.join();
+        t2.join();
+        t3.join();
+        out.println("***** Finalizou o preparo do Café ****** \n");
     }
 
-    private void separeteGroudCoffee() {
-        out.println(Thread.currentThread().getName());
+    private void setGroudCoffee() {
+        out.println(Thread.currentThread().getName() + "\n");
         groundCoffee = new GroundCoffee();
     }
 
-    public void separeteCups(int quantity) {
-        out.println(Thread.currentThread().getName());
+    private void setCups(int quantity) {
+        out.println(Thread.currentThread().getName() + "\n");
         setCups(getCups(quantity));
+    }
+
+    private void setSugar(){
+        out.println(Thread.currentThread().getName() + "\n");
+        sugar = new Sugar();
     }
 
     private List<Cup> getCups(int quantity){
