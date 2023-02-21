@@ -1,4 +1,4 @@
-public class Cup {
+public class Cup extends Container {
    private static boolean getOne;
    public Cup(){
        if (!getOne){

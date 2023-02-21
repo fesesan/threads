@@ -4,7 +4,7 @@ import java.util.List;
 import static java.lang.System.out;
 
 public class CoffeeFactory {
-    private List<Cup> cups;
+    private List<Container> cups;
     private CoffeeMachine coffeeMachine;
     private GroundCoffee groundCoffee;
     private Faucet faucet;
@@ -14,20 +14,26 @@ public class CoffeeFactory {
     }
 
     public void start() throws InterruptedException {
-        out.println("**** Começou a preparar o Café...**** \n");
+        out.println("****-------------------- Começou a preparar o Café --------------------**** \n");
 
         Thread t1 = new Thread(() -> setCups(2), "CupsThread");
         Thread t2 = new Thread(this::setGroudCoffee, "GroundCoffeeThread");
         Thread t3 = new Thread(this::setSugar, "SugarThread");
+        Thread t4 = new Thread(() -> putWaterOnCup(cups), "putWaterOnCupThread");
 
         t1.start();
         t2.start();
         t3.start();
 
         t1.join();
+        t4.start();
+
         t2.join();
         t3.join();
-        out.println("***** Finalizou o preparo do Café ****** \n");
+
+        makeCoffee();
+
+        out.println("****-------------------- Finalizou o preparo do Café --------------------**** \n");
     }
 
     private void setGroudCoffee() {
@@ -45,14 +51,38 @@ public class CoffeeFactory {
         sugar = new Sugar();
     }
 
-    private List<Cup> getCups(int quantity){
-       List<Cup> cups = new ArrayList<>();
+    private List<Container> getCups(int quantity){
+       List<Container> cups = new ArrayList<>();
        for(int i = 0; i < quantity; i++ )
            cups.add(new Cup());
        return cups;
     }
 
-    public void setCups(List<Cup> cups) {
+    public void setCups(List<Container> cups) {
         this.cups = cups;
+    }
+
+    private void putWaterOnCup(List<Container> cups){
+        out.println(Thread.currentThread().getName() + "\n");
+        Faucet faucet = new Faucet();
+        faucet.open();
+        faucet.putWaterIn(cups);
+        faucet.close();
+    }
+
+    private void makeCoffee() throws InterruptedException {
+        out.println(Thread.currentThread().getName() + "\n");
+        setCoffeeMachine(new CoffeeMachine());
+        coffeeMachine.putWater(cups);
+        coffeeMachine.putCoffee(groundCoffee);
+        coffeeMachine.on();
+    }
+
+    public CoffeeMachine getCoffeeMachine() {
+        return coffeeMachine;
+    }
+
+    public void setCoffeeMachine(CoffeeMachine coffeeMachine) {
+        this.coffeeMachine = coffeeMachine;
     }
 }
