@@ -9,6 +9,7 @@ public class GroundCoffee {
             System.out.println("***** Pegando Pó de Café... ***** \n");
             if (coffeeItsOver())
                 throw new InterruptedException("***** Ops...O café acabou! ***** \n");
+            System.out.println("***** Pó de Café separado! ***** \n");
         }catch (InterruptedException e){
             out.println(Thread.currentThread().getName() + " " + e.getMessage() + " Tivemos que abortar...");
             Thread.currentThread().getThreadGroup().interrupt();

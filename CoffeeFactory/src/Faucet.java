@@ -31,6 +31,7 @@ public class Faucet {
         Thread.sleep(3000);
         if(Thread.interrupted()){
             out.println(Thread.currentThread().getName() + "..parece que está faltando algo para o café... Tivemos que abortar...");
+            return containers;
         }
         containers.forEach(container -> container.isFull = true);
         return containers;
@@ -38,10 +39,6 @@ public class Faucet {
 
     public void close(){
         System.out.println("***** Torneira Fechada... ***** \n");
-    }
-
-    private boolean hasWaterIn(List<Container> containers) {
-        return containers.isEmpty() || containers.stream().anyMatch(container -> !container.isFull);
     }
 }
 
