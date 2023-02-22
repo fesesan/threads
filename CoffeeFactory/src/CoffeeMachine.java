@@ -46,7 +46,7 @@ public class CoffeeMachine {
             System.out.println("***** Preparando o seu cafézinho... ***** \n");
             Thread.sleep(2000);
         } else
-            System.out.println("***** A máquina foi ligada sem Café e Água ***** \n");
+            System.out.println("***** A máquina foi ligada sem o pó de café ou sem água ***** \n");
     }
     private void coffeeReady(){
         System.out.println("***** Café Pronto. ***** \n");

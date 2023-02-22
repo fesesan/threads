@@ -1,11 +1,18 @@
 import java.util.concurrent.ThreadLocalRandom;
 
+import static java.lang.System.out;
+
 public class GroundCoffee {
 
     public GroundCoffee(){
-        System.out.println("***** Pegando Pó de Café... ***** \n");
-        if (coffeeItsOver())
-            throw new RuntimeException("***** Ops...O café acabou! ***** \n");
+        try {
+            System.out.println("***** Pegando Pó de Café... ***** \n");
+            if (coffeeItsOver())
+                throw new InterruptedException("***** Ops...O café acabou! ***** \n");
+        }catch (InterruptedException e){
+            out.println(Thread.currentThread().getName() + " " + e.getMessage() + " Tivemos que abortar...");
+            Thread.currentThread().getThreadGroup().interrupt();
+        }
     }
 
     private boolean coffeeItsOver(){

@@ -20,29 +20,26 @@ public class CoffeeFactory {
         ThreadGroup coffeeThreads = new ThreadGroup("coffeeThreads");
         try {
 
-            Thread t1 = new Thread(coffeeThreads, () -> setCups(2), "CupsThread");
-            Thread t2 = new Thread(coffeeThreads, this::setGroudCoffee, "GroundCoffeeThread");
-            Thread t3 = new Thread(coffeeThreads, this::setSugar, "SugarThread");
-            Thread t4 = new Thread(coffeeThreads, () -> putWaterOnCup(cups), "putWaterOnCupThread");
+            Thread tCup = new Thread(coffeeThreads, () -> setCups(2), "CupsThread");
+            Thread tGround = new Thread(coffeeThreads, this::setGroudCoffee, "GroundCoffeeThread");
+            Thread tSugar = new Thread(coffeeThreads, this::setSugar, "SugarThread");
+            Thread tWaterOnCup = new Thread(coffeeThreads, () -> putWaterOnCup(cups), "putWaterOnCupThread");
 
-            t1.start();
-            t2.start();
-            t3.start();
+            tCup.start();
+            tGround.start();
+            tSugar.start();
 
-            t1.join();
-            t4.start();
+            tCup.join();
+            tWaterOnCup.start();
 
-            t2.join();
-            t3.join();
-            t4.join();
+            tGround.join();
+            tSugar.join();
+            tWaterOnCup.join();
 
             makeCoffee();
 
-        } catch (InterruptedException e){
-            out.println("**** Threads Ativas: " + coffeeThreads.activeCount());
+        } catch (Exception e){
             out.println("**** Tivemos um problema ao preparar o seu café...vamos ter que cancelar! **** \n");
-            coffeeThreads.interrupt();
-            out.println("**** Threads Ativas: " + coffeeThreads.activeCount());
         } finally {
             out.println("****-------------------- Finalizou o preparo do Café --------------------**** \n");
         }
@@ -54,10 +51,10 @@ public class CoffeeFactory {
 
     private void setCups(int quantity) {
         try {
-            Thread.sleep(30000);
+            Thread.sleep(5000);
             setCups(getCups(quantity));
-        } catch (Exception e){
-            throw new RuntimeException(e);
+        } catch (InterruptedException e){
+            out.println(Thread.currentThread().getName() + " -  Tive que abortar...parece que tá faltando algo para o café...");
         }
     }
 
@@ -78,11 +75,11 @@ public class CoffeeFactory {
 
     private void putWaterOnCup(List<Container> cups) {
         Faucet faucet = new Faucet();
-        faucet.open();
         try {
+            faucet.open();
             faucet.putWaterIn(cups);
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            out.println(Thread.currentThread().getName() + " " + e.getMessage() + " Tivemos que abortar...");
         } finally {
             faucet.close();
         }
