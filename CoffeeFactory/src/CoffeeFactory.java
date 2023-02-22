@@ -39,7 +39,7 @@ public class CoffeeFactory {
             makeCoffee();
 
         } catch (Exception e){
-            out.println("**** Tivemos um problema ao preparar o seu café...vamos ter que cancelar! **** \n");
+            out.println("**** Tivemos um probleminha ao preparar o seu café...vamos ter que cancelar! **** \n");
         } finally {
             out.println("****-------------------- Finalizou o preparo do Café --------------------**** \n");
         }
