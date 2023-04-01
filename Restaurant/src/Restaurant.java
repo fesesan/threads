@@ -4,7 +4,7 @@ import java.util.LinkedList;
 public class Restaurant {
 
     private LinkedList<Integer> mesasDisponiveis = new LinkedList<>(
-            Arrays.asList(1,2,3,4,5)
+            Arrays.asList(1,2,3)
     );
 
     private LinkedList<Integer> mesasOcupadas = new LinkedList<>();
@@ -43,6 +43,29 @@ public class Restaurant {
         System.out.println(nome + " faz o pagamento");
         System.out.println(nome + " aguarda o envio");
         System.out.println(nome + " recebe o pedido");
+    }
+
+    public void atenderMesa(){
+        String nome = Thread.currentThread().getName();
+
+        System.out.println(nome + " apresenta a casa");
+        System.out.println(nome + " anota o pedido");
+        System.out.println(nome + " envia o pedido para a cozinha");
+        System.out.println(nome + " aguarda pedido ficar pronto");
+        System.out.println(nome + " entrega pedido na mesa");
+        System.out.println(nome + " aguarda cliente comer");
+        System.out.println(nome + " recebe o pagamento");
+        System.out.println(nome + " retira os pratos");
+    }
+
+    public void entregarPedido(){
+        String nome = Thread.currentThread().getName();
+
+        System.out.println(nome + " verifica se tem pedido pronto");
+        System.out.println(nome + " retira o pedido");
+        System.out.println(nome + " leva o pedido ate o cliente");
+        System.out.println(nome + " vai embora");
+
     }
 
     private int pegaUmaMesa(){
