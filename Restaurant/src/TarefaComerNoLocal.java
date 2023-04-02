@@ -7,6 +7,10 @@ public class TarefaComerNoLocal implements Runnable {
     }
     @Override
     public void run() {
-        restaurant.praComerAgora();
+        try {
+            restaurant.paraComerAgora();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
