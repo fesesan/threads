@@ -5,11 +5,11 @@ public class CoordenadorDeMesas {
 
     private List<Mesa> mesas;
 
-    public CoordenadorDeMesas(int quantidadeDeMesas){
-        disponibilizar(quantidadeDeMesas);
+    public CoordenadorDeMesas(int quantidade){
+        disponibilizarMesas(quantidade);
     }
 
-    private void disponibilizar(int quantidadeDeMesas){
+    private void disponibilizarMesas(int quantidadeDeMesas){
         mesas = new ArrayList<>();
         for(int i =1; i <= quantidadeDeMesas; i++)
             mesas.add(new Mesa(i, true, false));
@@ -28,10 +28,8 @@ public class CoordenadorDeMesas {
         if(mesaDisponivel.isPresent()){
             Mesa mesa = mesaDisponivel.get();
             mesa.setDisponivel(false);
-            mesa.setEmAtendimento(true);
-
-            int index = mesas.indexOf(mesa);
-            mesas.set(index,mesa);
+            int i = mesas.indexOf(mesa);
+            mesas.set(i, mesa);
 
             return mesa.getNumero();
         } else
@@ -52,15 +50,14 @@ public class CoordenadorDeMesas {
         if(mesaOcupada.isPresent()){
             Mesa mesa = mesaOcupada.get();
             mesa.setDisponivel(true);
-            mesa.setEmAtendimento(false);
-
-            int index = mesas.indexOf(mesa);
-            mesas.set(index, mesa);
+            int i = mesas.indexOf(mesa);
+            mesas.set(i, mesa);
 
             liberarMesa(numeroDaMesa);
-
         }else
-            throw new RuntimeException("Numero de mesa nao encontrado. A comanda ta certa ?");
+            throw new RuntimeException(
+                    "Numero " + numeroDaMesa + " de mesa nao encontrado."
+            );
     }
 
     private void aguardarMesa() throws InterruptedException {
