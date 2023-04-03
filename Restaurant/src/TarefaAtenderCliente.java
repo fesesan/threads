@@ -7,6 +7,10 @@ public class TarefaAtenderCliente implements Runnable {
 
     @Override
     public void run() {
-        restaurant.atenderCliente();
+        try {
+            restaurant.atenderCliente();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

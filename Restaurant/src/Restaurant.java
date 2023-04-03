@@ -44,10 +44,12 @@ public class Restaurant {
         System.out.println(nome + " recebe o pedido");
     }
 
-    public void atenderCliente(){
+    public void atenderCliente() throws InterruptedException {
         String nome = Thread.currentThread().getName();
 
-        System.out.println(nome + " apresenta a casa");
+        int numeroMesa = coordenadorDeMesas.obterMesaParaAtender();
+
+        System.out.println(nome + " comecou a atender mesa " + numeroMesa);
         System.out.println(nome + " anota o pedido");
         System.out.println(nome + " envia o pedido para a cozinha");
         System.out.println(nome + " aguarda pedido ficar pronto");
