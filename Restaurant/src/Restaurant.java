@@ -1,27 +1,17 @@
-import java.util.Arrays;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Restaurant {
 
-    private CopyOnWriteArrayList<Integer> mesasDisponiveis = new CopyOnWriteArrayList<>(
-            Arrays.asList(1,2,3)
-    );
+    CoordenadorDeMesas coordenadorDeMesas;
 
-    CopyOnWriteArrayList<Integer> mesasOcupadas = new CopyOnWriteArrayList<>();
-    ;
-
-    public Restaurant() {
+    public Restaurant(CoordenadorDeMesas coordenadorDeMesas) {
+        this.coordenadorDeMesas = coordenadorDeMesas;
     }
 
     public void paraComerAgora() throws InterruptedException {
             String nome = Thread.currentThread().getName();
 
-            int numeroMesa;
-            synchronized (mesasDisponiveis){
-                while (mesasDisponiveis.isEmpty())
-                    aguardarMesa();
-                numeroMesa = ocuparMesa();
-            }
+            int numeroMesa = this.coordenadorDeMesas.ocuparMesa();
+
             System.out.println(nome + " senta na mesa: " + numeroMesa);
             System.out.println(nome + " faz Pedido");
             System.out.println(nome + " aguarda o preparo");
@@ -29,10 +19,7 @@ public class Restaurant {
             System.out.println(nome + " faz o pagamento");
             System.out.println(nome + " vai embora");
 
-            synchronized (mesasDisponiveis){
-                desocuparMesa(numeroMesa);
-                mesasDisponiveis.notifyAll();
-            }
+            coordenadorDeMesas.desocuparMesa(numeroMesa);
     }
 
     public void paraLevar(){
@@ -43,7 +30,8 @@ public class Restaurant {
         System.out.println(nome + " faz o pedido");
         System.out.println(nome + " faz o pagamento");
         System.out.println(nome + " espera pedido ficar pronto");
-        System.out.println(nome + " retira e vai embora");
+        System.out.println(nome + " retira pedido");
+        System.out.println(nome + " vai embora");
     }
 
     public void paraEntregar(){
@@ -76,25 +64,5 @@ public class Restaurant {
         System.out.println(nome + " retira o pedido");
         System.out.println(nome + " leva o pedido ate o cliente");
         System.out.println(nome + " vai embora");
-    }
-
-
-    private int ocuparMesa(){
-        int numeroDaMesa = mesasDisponiveis.remove(0);
-        mesasOcupadas.add(numeroDaMesa);
-        return numeroDaMesa;
-    }
-
-    private void desocuparMesa(Integer numeroMesa){
-        String nome = Thread.currentThread().getName();
-        mesasOcupadas.remove(numeroMesa);
-        mesasDisponiveis.add(numeroMesa);
-        System.out.println(nome + " liberou mesa " + numeroMesa + " para uso");
-    }
-
-    private void aguardarMesa() throws InterruptedException {
-        String nome = Thread.currentThread().getName();
-        System.out.println(nome + " esta aguardando uma mesa");
-        mesasDisponiveis.wait();
     }
 }

@@ -2,17 +2,18 @@ public class Main {
 
 
     public static void main(String[] args) {
-        Restaurant mcDonalds = new Restaurant();
+        Restaurant outBack = new Restaurant( new CoordenadorDeMesas(2));
 
-        Thread clienteJose = new Thread( new TarefaComerNoLocal(mcDonalds), "Jose" );
-        Thread clienteJeremias = new Thread( new TarefaComerNoLocal(mcDonalds), "Jeremias" );
-        Thread clienteMoises = new Thread( new TarefaComerNoLocal(mcDonalds), "Moises" );
+        Thread clienteJose = new Thread( new TarefaComerNoLocal(outBack), "Jose" );
+        Thread clienteJeremias = new Thread( new TarefaComerNoLocal(outBack), "Jeremias" );
+        Thread clienteMoises = new Thread( new TarefaComerNoLocal(outBack), "Moises" );
 
-        Thread clienteJoao = new Thread( new TarefaPedirParaLevar(mcDonalds), "Joao");
-        Thread clientePedro = new Thread(new TarefaPedirDelivery(mcDonalds), "Pedro");
+        Thread clienteJoao = new Thread( new TarefaPedirParaLevar(outBack), "Joao");
+        Thread clientePedro = new Thread(new TarefaPedirDelivery(outBack), "Pedro");
 
-        Thread garcomMessias = new Thread(new TarefaAtenderCliente(mcDonalds), "Messias");
-        Thread motoboyAugusto = new Thread(new TarefaEntregarPedidoDelivery(mcDonalds), "Augusto");
+
+        Thread garcomMessias = new Thread(new TarefaAtenderCliente(outBack), "Messias");
+        Thread motoboyAugusto = new Thread(new TarefaEntregarPedidoDelivery(outBack), "Augusto");
 
         clienteJose.start();
         clienteJeremias.start();
