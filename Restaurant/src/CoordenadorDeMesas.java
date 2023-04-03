@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.String.*;
+
 public class CoordenadorDeMesas {
 
     private List<Mesa> mesas;
@@ -12,11 +14,15 @@ public class CoordenadorDeMesas {
     private void disponibilizarMesas(int quantidadeDeMesas){
         mesas = new ArrayList<>();
         for(int i =1; i <= quantidadeDeMesas; i++)
-            mesas.add(new Mesa(i, true, false));
+            mesas.add(
+                    new Mesa(i, true, false)
+            );
         System.out.println("Total de Mesas disponiveis: " + mesas.size());
     }
 
-    public synchronized int ocuparMesa() throws InterruptedException {
+    public synchronized Mesa ocuparMesa() throws InterruptedException {
+        String nome = Thread.currentThread().getName();
+
         while(todasAsMesasOcupadas())
             aguardarMesa();
 
@@ -27,37 +33,24 @@ public class CoordenadorDeMesas {
                 .findFirst();
 
         if(mesaDisponivel.isPresent()){
-            Mesa mesa = mesaDisponivel.get();
-            mesa.setDisponivel(false);
-            int i = mesas.indexOf(mesa);
-            mesas.set(i, mesa);
+           Mesa mesa = mesaDisponivel.get();
+           mesa.setDisponivel(false);
 
-            return mesa.getNumero();
+           System.out.println(nome + " senta na mesa: " + mesa.getNumero());
+           notificarMesaParaAtender();
+
+           return mesa;
         } else
             throw new RuntimeException("Todas as mesas estao ocupadas");
     }
 
-    private boolean todasAsMesasOcupadas(){
-        return this.mesas.stream().noneMatch(Mesa::isDisponivel);
-    }
-
-    public void desocuparMesa(int numeroDaMesa){
-        var mesaOcupada =
-                this.mesas
-                .stream()
-                .filter(m -> m.getNumero() == numeroDaMesa && !m.isDisponivel())
-                .findFirst();
-
-        if(mesaOcupada.isPresent()){
-            Mesa mesa = mesaOcupada.get();
-            mesa.setDisponivel(true);
-            int i = mesas.indexOf(mesa);
-            mesas.set(i, mesa);
-
-            liberarMesa(numeroDaMesa);
-        }else
+    public void desocuparMesa(Mesa mesa){
+        if (mesas.contains(mesa)){
+            mesa.liberar();
+            notificarMesaDisponivel(mesa.getNumero());
+        } else
             throw new RuntimeException(
-                    "Numero " + numeroDaMesa + " de mesa nao encontrado."
+                    format("Mesa %s nao encontrada.", mesa.getNumero())
             );
     }
 
@@ -69,38 +62,52 @@ public class CoordenadorDeMesas {
         }
     }
 
-    private void liberarMesa(int numeroDaMesa){
+    private void notificarMesaDisponivel(int numeroMesa){
+        String nome = Thread.currentThread().getName();
         synchronized (mesas){
-            String nome = Thread.currentThread().getName();
-            System.out.println(nome + " desocupou a mesa " + numeroDaMesa);
+            System.out.println(nome + " desocupou a mesa " + numeroMesa);
             mesas.notifyAll();
         }
     }
 
-    public int obterMesaParaAtender() throws InterruptedException {
+    private void notificarMesaParaAtender(){
+        String nome = Thread.currentThread().getName();
         synchronized (mesas){
-            while (todasAsMesasAtendidas())
+            mesas.notifyAll();
+        }
+    }
+
+    public Mesa obterMesaParaAtender() throws InterruptedException {
+        synchronized (mesas){
+            while (!algumaMesaParaAtender() || todasAsMesasAtendidas())
                 aguardarMesa();
 
             var mesaPendente =
                     this.mesas
                     .stream()
-                    .filter(m -> !m.isEmAtendimento())
+                    .filter(m -> !m.isDisponivel() && !m.isEmAtendimento())
                     .findFirst();
 
             if(mesaPendente.isPresent()){
-                Mesa mesa = mesaPendente.get();
-                mesa.setEmAtendimento(true);
-                int i = mesas.indexOf(mesa);
-                mesas.set(i, mesa);
-
-                return  mesa.getNumero();
+                return mesaPendente.get();
             } else
                 throw new RuntimeException("Nao ha mesas a serem atendidas.");
         }
     }
 
+    private boolean algumaMesaParaAtender(){
+        return this.mesas.stream().anyMatch(
+                m -> !m.isDisponivel() && !m.isEmAtendimento()
+        );
+    }
+
+    private boolean todasAsMesasOcupadas(){
+        return this.mesas.stream().noneMatch(Mesa::isDisponivel);
+    }
+
     private boolean todasAsMesasAtendidas(){
-        return this.mesas.stream().allMatch(Mesa::isEmAtendimento);
+        return this.mesas.stream().allMatch(
+                m -> !m.isDisponivel() && m.isEmAtendimento()
+        );
     }
 }

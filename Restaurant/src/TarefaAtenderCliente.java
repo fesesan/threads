@@ -8,7 +8,9 @@ public class TarefaAtenderCliente implements Runnable {
     @Override
     public void run() {
         try {
-            restaurant.atenderCliente();
+            String nome = Thread.currentThread().getName();
+            Garcom garcom = new Garcom(nome);
+            restaurant.atenderMesa(garcom);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

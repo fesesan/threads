@@ -10,16 +10,18 @@ public class Restaurant {
     public void paraComerAgora() throws InterruptedException {
             String nome = Thread.currentThread().getName();
 
-            int numeroMesa = this.coordenadorDeMesas.ocuparMesa();
+            Mesa mesa = this.coordenadorDeMesas.ocuparMesa();
 
-            System.out.println(nome + " senta na mesa: " + numeroMesa);
+            while (!mesa.isEmAtendimento())
+                    mesa.aguardarAtendimento();
+
             System.out.println(nome + " faz Pedido");
             System.out.println(nome + " aguarda o preparo");
             System.out.println(nome + " come");
             System.out.println(nome + " faz o pagamento");
             System.out.println(nome + " vai embora");
 
-            coordenadorDeMesas.desocuparMesa(numeroMesa);
+            coordenadorDeMesas.desocuparMesa(mesa);
     }
 
     public void paraLevar(){
@@ -44,19 +46,18 @@ public class Restaurant {
         System.out.println(nome + " recebe o pedido");
     }
 
-    public void atenderCliente() throws InterruptedException {
-        String nome = Thread.currentThread().getName();
+    public void atenderMesa(Garcom garcom) throws InterruptedException {
+        Mesa mesa = coordenadorDeMesas.obterMesaParaAtender();
 
-        int numeroMesa = coordenadorDeMesas.obterMesaParaAtender();
+        garcom.atenderMesa(mesa);
 
-        System.out.println(nome + " comecou a atender mesa " + numeroMesa);
-        System.out.println(nome + " anota o pedido");
-        System.out.println(nome + " envia o pedido para a cozinha");
-        System.out.println(nome + " aguarda pedido ficar pronto");
-        System.out.println(nome + " entrega pedido na mesa");
-        System.out.println(nome + " aguarda cliente comer");
-        System.out.println(nome + " recebe o pagamento");
-        System.out.println(nome + " limpa mesa");
+        System.out.println(garcom.nome + " anota o pedido");
+        System.out.println(garcom.nome + " envia o pedido para a cozinha");
+        System.out.println(garcom.nome + " aguarda pedido ficar pronto");
+        System.out.println(garcom.nome + " entrega pedido na mesa");
+        System.out.println(garcom.nome + " aguarda cliente comer");
+        System.out.println(garcom.nome + " recebe o pagamento");
+        System.out.println(garcom.nome + " limpa mesa");
     }
 
     public void entregarPedido(){

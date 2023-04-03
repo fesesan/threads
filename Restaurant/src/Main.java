@@ -8,8 +8,8 @@ public class Main {
         Thread clienteJeremias = new Thread( new TarefaComerNoLocal(outBack), "cliente Jeremias" );
         Thread clienteMoises = new Thread( new TarefaComerNoLocal(outBack), "cliente Moises" );
 
-        Thread clienteJoao = new Thread( new TarefaPedirParaLevar(outBack), "cliente Joao");
-        Thread clientePedro = new Thread(new TarefaPedirDelivery(outBack), "cliente Pedro");
+//        Thread clienteJoao = new Thread( new TarefaPedirParaLevar(outBack), "cliente Joao");
+//        Thread clientePedro = new Thread(new TarefaPedirDelivery(outBack), "cliente Pedro");
 
 
         Thread garcomMessias = new Thread(new TarefaAtenderCliente(outBack), "garcom Messias");
@@ -22,7 +22,7 @@ public class Main {
         garcomNoe.setDaemon(true);
 
 
-        Thread motoboyAugusto = new Thread(new TarefaEntregarPedidoDelivery(outBack), "Augusto");
+//        Thread motoboyAugusto = new Thread(new TarefaEntregarPedidoDelivery(outBack), "Augusto");
 
         clienteJose.start();
         clienteJeremias.start();

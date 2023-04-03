@@ -1,6 +1,6 @@
 public class Mesa {
 
-    private int numero;
+    private final int numero;
     private boolean disponivel;
     private  boolean emAtendimento;
 
@@ -28,6 +28,24 @@ public class Mesa {
 
     public void setEmAtendimento(boolean emAtendimento) {
         this.emAtendimento = emAtendimento;
+    }
+
+    public void aguardarAtendimento() throws InterruptedException {
+        String nome = Thread.currentThread().getName();
+        synchronized (this){
+            System.out.println(nome + " aguardando atendimento");
+            this.wait();
+        }
+    }
+
+    public void liberar(){
+        String nome = Thread.currentThread().getName();
+        synchronized (this){
+            this.setDisponivel(true);
+            this.setEmAtendimento(false);
+            this.notifyAll();
+            System.out.println(nome + " liberou mesa " + getNumero());
+        }
     }
 }
 
